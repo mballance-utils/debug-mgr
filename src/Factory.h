@@ -35,7 +35,7 @@ public:
 
     virtual IDebugMgr *getDebugMgr() override;
 
-    static Factory *inst();
+    static IFactory *inst();
 
 private:
     DebugMgrUP                  m_dbg_mgr;

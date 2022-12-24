@@ -1,0 +1,24 @@
+
+package:
+   name: debug-mgr
+   version: 0.0.1
+
+   setup-deps:
+     - cython
+     - ninja
+   
+   dev-deps:
+     - name: cython
+       src: pypi
+     - name: gtest
+       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
+     - name: ninja
+       src: pypi
+
+   deps:
+     - name: cython
+       src: pypi
+     - name: gtest
+       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
+       
+

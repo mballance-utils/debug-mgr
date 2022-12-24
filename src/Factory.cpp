@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include <stdio.h>
 #include "Factory.h"
 
 
@@ -36,7 +37,7 @@ IDebugMgr *Factory::getDebugMgr() {
     return m_dbg_mgr.get();
 }
 
-Factory *Factory::inst() {
+IFactory *Factory::inst() {
     if (!m_inst) {
         m_inst = FactoryUP(new Factory());
     }
@@ -44,4 +45,12 @@ Factory *Factory::inst() {
 }
 
 FactoryUP Factory::m_inst;
+
+extern "C" IFactory *debug_mgr_getFactory() {
+    fprintf(stdout, "debug_mgr_getFactory() %p\n",
+        Factory::inst());
+    fflush(stdout);
+    return Factory::inst();
+}
+
 }

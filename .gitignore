@@ -33,3 +33,8 @@
 
 build/
 packages/
+
+__pycache__/
+python/debug_mgr/*.so
+python/core.cpp
+

@@ -21,5 +21,7 @@ cdef class DebugMgr(object):
 
     cpdef void enable(self, bool en)
 
+    cpdef decl.IDebugMgr *getHndl(self)
+
     @staticmethod
     cdef DebugMgr mk(decl.IDebugMgr *hndl, bool owned=*)

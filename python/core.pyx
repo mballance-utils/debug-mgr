@@ -42,6 +42,9 @@ cdef class DebugMgr(object):
     cpdef void enable(self, bool en):
         self._hndl.enable(en)
 
+    cpdef decl.IDebugMgr *getHndl(self):
+        return self._hndl
+
     @staticmethod
     cdef DebugMgr mk(decl.IDebugMgr *hndl, bool owned=True):
         ret = DebugMgr()

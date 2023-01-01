@@ -54,12 +54,8 @@ extern "C" IFactory *debug_mgr_getFactory() {
     return Factory::inst();
 }
 
-IFactory *dmgr_getFactory() {
-    fprintf(stdout, "debug_mgr_getFactory() %p\n",
-        Factory::inst());
-    fflush(stdout);
-    return Factory::inst();
 }
 
-
+dmgr::IFactory *dmgr_getFactory() {
+    return dmgr::Factory::inst();
 }

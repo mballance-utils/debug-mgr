@@ -19,6 +19,7 @@
  *     Author:
  */
 #include <stdio.h>
+#include "dmgr/FactoryExt.h"
 #include "Factory.h"
 
 
@@ -52,5 +53,13 @@ extern "C" IFactory *debug_mgr_getFactory() {
     fflush(stdout);
     return Factory::inst();
 }
+
+IFactory *dmgr_getFactory() {
+    fprintf(stdout, "debug_mgr_getFactory() %p\n",
+        Factory::inst());
+    fflush(stdout);
+    return Factory::inst();
+}
+
 
 }

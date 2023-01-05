@@ -24,9 +24,9 @@
 
 namespace dmgr {
 
-Debug::Debug(const std::string &name) : m_en(false), m_name(name) {
-	m_mgr = DebugMgr::inst();
-	m_mgr->addDebug(this);
+Debug::Debug(DebugMgr *mgr, const std::string &name) : 
+        m_en(false), m_name(name) {
+	m_mgr = mgr;
 }
 
 Debug::~Debug() {

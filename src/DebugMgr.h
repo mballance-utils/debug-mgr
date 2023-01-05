@@ -42,14 +42,11 @@ public:
 
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) override;
 
-	static DebugMgr *inst();
-
 private:
 	bool											m_en;
 	std::unordered_map<std::string, int32_t>		m_debug_en_m;
 	std::unordered_map<std::string, IDebug *>		m_debug_ep_m;
 
-	static DebugMgrUP								m_inst;
 };
 
 } /* namespace dmgr */

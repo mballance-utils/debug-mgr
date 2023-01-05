@@ -11,6 +11,7 @@
 namespace dmgr {
 
 DebugMgr::DebugMgr() {
+    fprintf(stdout, "DebugMgr::DebugMgr\n");
 	m_en = false;
 }
 
@@ -44,8 +45,8 @@ IDebug *DebugMgr::findDebug(const std::string &name) {
 	if (it != m_debug_ep_m.end()) {
 		return it->second;
 	} else {
-		Debug *dbg = new Debug(name);
-		m_debug_ep_m.insert({name, dbg});
+		Debug *dbg = new Debug(this, name);
+        addDebug(dbg);
 		return dbg;
 	}
 }
@@ -72,14 +73,5 @@ void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
 	vfprintf(stdout, fmt, ap);
 	fputs("\n", stdout);
 }
-
-DebugMgr *DebugMgr::inst() {
-	if (!m_inst) {
-		m_inst = DebugMgrUP(new DebugMgr());
-	}
-	return m_inst.get();
-}
-
-DebugMgrUP DebugMgr::m_inst;
 
 } /* namespace dmgr */

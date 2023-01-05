@@ -26,7 +26,7 @@ namespace dmgr {
 class DebugMgr;
 class Debug : public virtual IDebug {
 public:
-	Debug(const std::string &name);
+	Debug(DebugMgr *dmgr, const std::string &name);
 
 	virtual ~Debug();
 

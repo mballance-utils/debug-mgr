@@ -54,4 +54,11 @@ void Debug::debug(const char *fmt, ...) {
 	va_end(ap);
 }
 
+void Debug::fatal(const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    m_mgr->fatal(this, fmt, ap);
+    va_end(ap);
+}
+
 } /* namespace dmgr */

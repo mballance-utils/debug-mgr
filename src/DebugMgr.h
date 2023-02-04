@@ -42,6 +42,8 @@ public:
 
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) override;
 
+	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) override;
+
 private:
 	bool											m_en;
 	std::unordered_map<std::string, int32_t>		m_debug_en_m;

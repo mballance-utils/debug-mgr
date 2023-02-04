@@ -42,6 +42,8 @@ public:
 
 	void debug(const char *fmt, ...);
 
+    virtual void fatal(const char *fmt, ...) override;
+
 private:
 	bool			m_en;
 	std::string		m_name;

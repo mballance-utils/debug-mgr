@@ -4,7 +4,7 @@
  *  Created on: Mar 16, 2022
  *      Author: mballance
  */
-
+#include <stdexcept>
 #include "DebugMgr.h"
 #include "Debug.h"
 
@@ -72,6 +72,14 @@ void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
 	fprintf(stdout, "%s: ", dbg->name().c_str());
 	vfprintf(stdout, fmt, ap);
 	fputs("\n", stdout);
+}
+
+void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
+    fprintf(stdout, "Fatal: %s: ", dbg->name().c_str());
+    vfprintf(stdout, fmt, ap);
+    fputs("\n", stdout);
+    fflush(stdout);
+    throw std::runtime_error("");
 }
 
 } /* namespace dmgr */

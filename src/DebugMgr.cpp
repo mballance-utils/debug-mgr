@@ -6,12 +6,12 @@
  */
 #include <stdexcept>
 #include "DebugMgr.h"
+#include "DebugOutFile.h"
 #include "Debug.h"
 
 namespace dmgr {
 
-DebugMgr::DebugMgr() {
-    fprintf(stdout, "DebugMgr::DebugMgr\n");
+DebugMgr::DebugMgr() : m_out(new DebugOutFile(stdout, false)) {
 	m_en = false;
 }
 
@@ -57,28 +57,19 @@ void DebugMgr::setFlags(
 }
 
 void DebugMgr::enter(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "--> %s::", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->enter(dbg, fmt, ap);
 }
 
 void DebugMgr::leave(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "<-- %s::", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->leave(dbg, fmt, ap);
 }
 
 void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "%s: ", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->debug(dbg, fmt, ap);
 }
 
 void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
-    fprintf(stdout, "Fatal: %s: ", dbg->name().c_str());
-    vfprintf(stdout, fmt, ap);
-    fputs("\n", stdout);
-    fflush(stdout);
+    m_out->fatal(dbg, fmt, ap);
     throw std::runtime_error("");
 }
 

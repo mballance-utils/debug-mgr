@@ -20,6 +20,8 @@
  */
 #include <stdio.h>
 #include "dmgr/FactoryExt.h"
+#include "DebugOutFile.h"
+#include "DebugOutList.h"
 #include "Factory.h"
 
 
@@ -36,6 +38,14 @@ Factory::~Factory() {
 
 IDebugMgr *Factory::getDebugMgr() {
     return m_dbg_mgr.get();
+}
+
+IDebugOut *Factory::mkDebugOutFile(FILE *fp, bool close_fp) {
+    return new DebugOutFile(fp, close_fp);
+}
+
+IDebugOutList *Factory::mkDebugOutList() {
+    return new DebugOutList();
 }
 
 IFactory *Factory::inst() {

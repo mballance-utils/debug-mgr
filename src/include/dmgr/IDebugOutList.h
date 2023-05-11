@@ -1,5 +1,5 @@
 /**
- * IFactory.h
+ * IDebugOutList.h
  *
  * Copyright 2022 Matthew Ballance and Contributors
  *
@@ -19,24 +19,21 @@
  *     Author: 
  */
 #pragma once
-#include "dmgr/IDebugMgr.h" 
+#include <vector>
 #include "dmgr/IDebugOut.h"
-#include "dmgr/IDebugOutList.h"
 
 namespace dmgr {
 
 
 
-class IFactory {
+class IDebugOutList : public virtual IDebugOut {
 public:
 
-    virtual ~IFactory() { }
+    virtual ~IDebugOutList() { }
 
-    virtual IDebugMgr *getDebugMgr() = 0;
+    virtual void addOutput(IDebugOut *out) = 0;
 
-    virtual IDebugOut *mkDebugOutFile(FILE *fp, bool close_fp) = 0;
-
-    virtual IDebugOutList *mkDebugOutList() = 0;
+    virtual const std::vector<IDebugOutUP> &getOutputs() const = 0;
 
 };
 

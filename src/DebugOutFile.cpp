@@ -61,4 +61,8 @@ void DebugOutFile::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     fflush(m_fp);
 }
 
+void DebugOutFile::flush() {
+    fflush(m_fp);
+}
+
 }

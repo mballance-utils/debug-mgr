@@ -37,6 +37,8 @@ public:
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) = 0;
 
+    virtual void flush() = 0;
+
 };
 
 } /* namespace dmgr */

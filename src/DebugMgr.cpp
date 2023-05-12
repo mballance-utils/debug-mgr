@@ -73,4 +73,8 @@ void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     throw std::runtime_error("");
 }
 
+void DebugMgr::flush() {
+    m_out->flush();
+}
+
 } /* namespace dmgr */

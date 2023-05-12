@@ -53,6 +53,8 @@ public:
 
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) override;
 
+    virtual void flush() override;
+
 private:
 	bool											m_en;
     IDebugOutUP                                     m_out;

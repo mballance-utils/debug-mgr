@@ -36,6 +36,7 @@ public:
 	virtual void leave(IDebug *dbg, const char *fmt, va_list ap) override;
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) override;
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) override;
+    virtual void flush() override;
 
 private:
     FILE                *m_fp;

@@ -5,6 +5,7 @@
  *      Author: mballance
  */
 #pragma once
+#include <stdarg.h>
 #include <unordered_map>
 #include "dmgr/IDebug.h"
 

@@ -26,7 +26,7 @@ namespace dmgr {
 class DebugMgr;
 class Debug : public virtual IDebug {
 public:
-	Debug(const std::string &name);
+	Debug(DebugMgr *dmgr, const std::string &name);
 
 	virtual ~Debug();
 
@@ -41,6 +41,8 @@ public:
 	void leave(const char *fmt, ...);
 
 	void debug(const char *fmt, ...);
+
+    virtual void fatal(const char *fmt, ...) override;
 
 private:
 	bool			m_en;

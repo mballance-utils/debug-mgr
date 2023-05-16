@@ -1,5 +1,5 @@
 /**
- * IFactory.h
+ * DebugOutFile.h
  *
  * Copyright 2022 Matthew Ballance and Contributors
  *
@@ -19,27 +19,32 @@
  *     Author: 
  */
 #pragma once
-#include "dmgr/IDebugMgr.h" 
+#include <stdio.h>
 #include "dmgr/IDebugOut.h"
-#include "dmgr/IDebugOutList.h"
 
 namespace dmgr {
 
 
 
-class IFactory {
+class DebugOutFile : public virtual IDebugOut {
 public:
+    DebugOutFile(FILE *fp, bool close_fp);
 
-    virtual ~IFactory() { }
+    virtual ~DebugOutFile();
+    
+	virtual void enter(IDebug *dbg, const char *fmt, va_list ap) override;
+	virtual void leave(IDebug *dbg, const char *fmt, va_list ap) override;
+	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) override;
+	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) override;
+    virtual void flush() override;
 
-    virtual IDebugMgr *getDebugMgr() = 0;
+private:
+    FILE                *m_fp;
+    bool                m_close_fp;
 
-    virtual IDebugOut *mkDebugOutFile(FILE *fp, bool close_fp) = 0;
-
-    virtual IDebugOutList *mkDebugOutList() = 0;
 
 };
 
-} /* namespace dmgr */
+}
 
 

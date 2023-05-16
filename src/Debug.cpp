@@ -24,9 +24,9 @@
 
 namespace dmgr {
 
-Debug::Debug(const std::string &name) : m_en(false), m_name(name) {
-	m_mgr = DebugMgr::inst();
-	m_mgr->addDebug(this);
+Debug::Debug(DebugMgr *mgr, const std::string &name) : 
+        m_en(false), m_name(name) {
+	m_mgr = mgr;
 }
 
 Debug::~Debug() {
@@ -52,6 +52,13 @@ void Debug::debug(const char *fmt, ...) {
 	va_start(ap, fmt);
 	m_mgr->debug(this, fmt, ap);
 	va_end(ap);
+}
+
+void Debug::fatal(const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    m_mgr->fatal(this, fmt, ap);
+    va_end(ap);
 }
 
 } /* namespace dmgr */

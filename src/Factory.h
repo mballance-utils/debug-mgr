@@ -35,6 +35,10 @@ public:
 
     virtual IDebugMgr *getDebugMgr() override;
 
+    virtual IDebugOut *mkDebugOutFile(FILE *fp, bool close_fp) override;
+
+    virtual IDebugOutList *mkDebugOutList() override;
+
     static IFactory *inst();
 
 private:

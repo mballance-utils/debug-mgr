@@ -8,10 +8,11 @@
 #include <stdarg.h>
 #include <unordered_map>
 #include "dmgr/IDebug.h"
+#include "dmgr/IDebugOut.h"
 
 namespace dmgr {
 
-class IDebugMgr {
+class IDebugMgr : public virtual IDebugOut {
 public:
 
 	virtual ~IDebugMgr() { }
@@ -25,9 +26,15 @@ public:
 
 	virtual IDebug *findDebug(const std::string &name) = 0;
 
+    virtual void setDebugOut(IDebugOut *out) = 0;
+
+    virtual IDebugOut *getDebugOut() = 0;
+
 	virtual void enter(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void leave(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) = 0;
+	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) = 0;
+
 
 };
 

@@ -19,6 +19,9 @@
  *     Author:
  */
 #include <stdio.h>
+#include "dmgr/FactoryExt.h"
+#include "DebugOutFile.h"
+#include "DebugOutList.h"
 #include "Factory.h"
 
 
@@ -37,6 +40,14 @@ IDebugMgr *Factory::getDebugMgr() {
     return m_dbg_mgr.get();
 }
 
+IDebugOut *Factory::mkDebugOutFile(FILE *fp, bool close_fp) {
+    return new DebugOutFile(fp, close_fp);
+}
+
+IDebugOutList *Factory::mkDebugOutList() {
+    return new DebugOutList();
+}
+
 IFactory *Factory::inst() {
     if (!m_inst) {
         m_inst = FactoryUP(new Factory());
@@ -53,4 +64,8 @@ extern "C" IFactory *debug_mgr_getFactory() {
     return Factory::inst();
 }
 
+}
+
+dmgr::IFactory *dmgr_getFactory() {
+    return dmgr::Factory::inst();
 }

@@ -4,13 +4,14 @@
  *  Created on: Mar 16, 2022
  *      Author: mballance
  */
-
+#include <stdexcept>
 #include "DebugMgr.h"
+#include "DebugOutFile.h"
 #include "Debug.h"
 
 namespace dmgr {
 
-DebugMgr::DebugMgr() {
+DebugMgr::DebugMgr() : m_out(new DebugOutFile(stdout, false)) {
 	m_en = false;
 }
 
@@ -44,8 +45,8 @@ IDebug *DebugMgr::findDebug(const std::string &name) {
 	if (it != m_debug_ep_m.end()) {
 		return it->second;
 	} else {
-		Debug *dbg = new Debug(name);
-		m_debug_ep_m.insert({name, dbg});
+		Debug *dbg = new Debug(this, name);
+        addDebug(dbg);
 		return dbg;
 	}
 }
@@ -56,30 +57,24 @@ void DebugMgr::setFlags(
 }
 
 void DebugMgr::enter(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "--> %s::", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->enter(dbg, fmt, ap);
 }
 
 void DebugMgr::leave(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "<-- %s::", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->leave(dbg, fmt, ap);
 }
 
 void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
-	fprintf(stdout, "%s: ", dbg->name().c_str());
-	vfprintf(stdout, fmt, ap);
-	fputs("\n", stdout);
+    m_out->debug(dbg, fmt, ap);
 }
 
-DebugMgr *DebugMgr::inst() {
-	if (!m_inst) {
-		m_inst = DebugMgrUP(new DebugMgr());
-	}
-	return m_inst.get();
+void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
+    m_out->fatal(dbg, fmt, ap);
+    throw std::runtime_error("");
 }
 
-DebugMgrUP DebugMgr::m_inst;
+void DebugMgr::flush() {
+    m_out->flush();
+}
 
 } /* namespace dmgr */

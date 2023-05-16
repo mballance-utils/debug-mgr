@@ -22,6 +22,8 @@ public:
 
     virtual void debug(const char *fmt, ...) = 0;
 
+    virtual void fatal(const char *fmt, ...) = 0;
+
 };
 
 }

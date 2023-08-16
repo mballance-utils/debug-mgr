@@ -9,10 +9,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install Python
+        run: |
+          which brew
+          brew install python@3.9 python@3.10 python@3.11
       - name: Fetch dependencies
         run: |
-          arch
           python3 --version
-          python3 -m pip install ivpm cython setuptools wheel
+          python3 -m pip install ivpm cython setuptools wheel build
           python3 -m ivpm update
-          ./packages/python/bin/python setup.py bdist_wheel
+      - name: Build wheel
+          ./packages/python/bin/python -m build

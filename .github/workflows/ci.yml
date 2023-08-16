@@ -20,10 +20,9 @@ jobs:
           brew install ${{ format('python@{0}', matrix.pyversion) }}
       - name: Fetch dependencies
         run: |
-          python=${{ format('/usr/local/bin/python{0}', matrix.pyversion) }}
-          $python -m pip install ivpm
-          /usr/local/bin/python${{ matrix.pyversion }} -m ivpm update
-          /usr/local/bin/python${{ matrix.pyversion }} -m pip install cython setuptools wheel build
+          ${{ format('/usr/local/bin/python{0}', matrix.pyversion) }} -m pip install ivpm
+          ${{ format('/usr/local/bin/python{0}', matrix.pyversion) }} -m ivpm update
+          ./packages/python/bin/python -m pip install cython setuptools wheel build
       - name: Build wheel
         run: |
           ./packages/python/bin/python -m build

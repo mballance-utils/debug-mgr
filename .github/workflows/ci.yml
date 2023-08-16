@@ -17,7 +17,7 @@ jobs:
           which brew
           python="python@${{ matrix.pyversion }}"
           echo "python=$python"
-          brew install ${{ format('python@{0}', matrix.pyversion) }}
+          brew install ${{ format('python@{0}', matrix.pyversion) }} ninja
       - name: Fetch dependencies
         run: |
           ${{ format('/usr/local/bin/python{0}', matrix.pyversion) }} -m pip install ivpm

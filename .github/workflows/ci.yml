@@ -7,11 +7,11 @@ on:
 jobs:
   ci-macos-arm64:
     runs-on: macos-latest
-    target: aarch64-apple-darwin
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Fetch dependencies
         run: |
+          arch
           python3 --version
           python3 -m pip install ivpm cython setuptools wheel
           python3 -p ivpm update

@@ -14,5 +14,5 @@ jobs:
           arch
           python3 --version
           python3 -m pip install ivpm cython setuptools wheel
-          python3 -p ivpm update
+          python3 -m ivpm update
           ./packages/python/bin/python setup.py bdist_wheel

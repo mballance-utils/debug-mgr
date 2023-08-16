@@ -25,4 +25,4 @@ jobs:
           ./packages/python/bin/python -m pip install cython setuptools wheel build
       - name: Build wheel
         run: |
-          ./packages/python/bin/python -m build
+          ./packages/python/bin/python setup.py bdist_wheel

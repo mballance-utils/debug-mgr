@@ -21,4 +21,4 @@ jobs:
           /usr/local/bin/python3.9 -m pip install cython setuptools wheel build
       - name: Build wheel
         run: |
-          ./packages/python/bin/python setup.py build_ext
+          ./packages/python/bin/python -m build

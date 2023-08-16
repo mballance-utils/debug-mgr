@@ -8,7 +8,7 @@ jobs:
   ci-macos-arm64:
     strategy:
       matrix:
-        pyversion: [3.9, 3.10, 3.11]
+        pyversion: ["3.9", "3.10", "3.11"]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2

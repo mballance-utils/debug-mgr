@@ -19,4 +19,5 @@ jobs:
           python3 -m pip install ivpm cython setuptools wheel build
           python3 -m ivpm update
       - name: Build wheel
+        run: |
           ./packages/python/bin/python -m build

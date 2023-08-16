@@ -10,16 +10,19 @@ jobs:
       matrix:
         pyversion: [3.9 3.10 3.11]
     runs-on: macos-latest
+    env:
+      PYTHON_INST: ${{ format('python@{0}', matrix.pyversion) }}
     steps:
       - uses: actions/checkout@v2
       - name: Install Python
         run: |
           which brew
           python="python@${{ matrix.pyversion }}"
-          brew install $python
+          echo "python=$python"
+          brew install ${{ format('python@{0}', matrix.pyversion) }}
       - name: Fetch dependencies
         run: |
-          python="/usr/local/bin/python${{ matrix.pyversion }}"
+          python=${{ format('/usr/local/bin/python{0}', matrix.pyversion) }}
           $python -m pip install ivpm
           /usr/local/bin/python${{ matrix.pyversion }} -m ivpm update
           /usr/local/bin/python${{ matrix.pyversion }} -m pip install cython setuptools wheel build

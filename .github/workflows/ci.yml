@@ -15,9 +15,10 @@ jobs:
           brew install python@3.9 python@3.10 python@3.11
       - name: Fetch dependencies
         run: |
-          python3 --version
-          python3 -m pip install ivpm cython setuptools wheel build
-          python3 -m ivpm update
+          /usr/local/bin/python3.9 --version
+          export IVPM_PYTHON=/usr/local/bin/python3.9
+          /usr/local/bin/python3.9 -m ivpm update
+          /usr/local/bin/python3.9 -m pip install ivpm cython setuptools wheel build
       - name: Build wheel
         run: |
-          ./packages/python/bin/python -m build
+          ./packages/python/bin/python setup.py build_ext

@@ -15,11 +15,12 @@ jobs:
       - name: Install Python
         run: |
           which brew
-          brew install python@${{ matrix.pyversion }}
+          python="python@${{ matrix.pyversion }}"
+          brew install $python
       - name: Fetch dependencies
         run: |
-          /usr/local/bin/python${{ matrix.pyversion }} --version
-          /usr/local/bin/python${{ matrix.pyversion }} -m pip install ivpm
+          python="/usr/local/bin/python${{ matrix.pyversion }}"
+          $python -m pip install ivpm
           /usr/local/bin/python${{ matrix.pyversion }} -m ivpm update
           /usr/local/bin/python${{ matrix.pyversion }} -m pip install cython setuptools wheel build
       - name: Build wheel

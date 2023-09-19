@@ -5,23 +5,21 @@ on:
   - workflow_dispatch
 
 jobs:
-  ci-macos-arm64:
+  ci-macos:
     strategy:
       matrix:
         pyversion: ["3.9", "3.10", "3.11"]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Python
-        run: |
-          which brew
-          python="python@${{ matrix.pyversion }}"
-          echo "python=$python"
-          brew install ${{ format('python@{0}', matrix.pyversion) }} ninja
+      - uses: actions/setup-python@v4
+        with:
+          python-version: {{ matris.pyversion }}
       - name: Fetch dependencies
         run: |
-          ${{ format('/usr/local/bin/python{0}', matrix.pyversion) }} -m pip install ivpm
-          ${{ format('/usr/local/bin/python{0}', matrix.pyversion) }} -m ivpm update
+          python3 --version
+          python3 -m pip install ivpm
+          python3 -m ivpm update
           ./packages/python/bin/python -m pip install cython setuptools wheel build
       - name: Build wheel
         run: |

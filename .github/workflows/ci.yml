@@ -30,6 +30,8 @@ jobs:
         ls packages/python/bin
         ./packages/python/bin/python -m pip install cython setuptools wheel auditwheel build twine
     - name: Build wheel
+      env:
+        BUILD_NUM: ${{ github.run_id }}
       run: |
         ./packages/python/bin/python setup.py bdist_wheel
         ./packages/python/bin/auditwheel repair dist/*.whl
@@ -46,6 +48,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Fetch dependencies
+        env:
+          BUILD_NUM: ${{ github.run_id }}
         run: |
           python3 --version
           python3 -m pip install ivpm
@@ -99,13 +103,15 @@ jobs:
 
     - name: Build/Test Package
       shell: bash
+      env:
+        BUILD_NUM: ${{ github.run_id }}
       run: |
         python -V
         python -m pip install ivpm
         python -m ivpm update
         ls packages/python
-        ls packages/python/lib
-        ls packages/python/bin
+        ls packages/python/Lib
+        ls packages/python/Scripts
         ./packages/python/bin/python -m pip install cython setuptools wheel build twine
         ./packages/python/bin/python setup.py build bdist_wheel
         ls dist

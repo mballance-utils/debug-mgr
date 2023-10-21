@@ -5,7 +5,41 @@ on:
   - workflow_dispatch
 
 jobs:
-  ci-macos:
+  linux:
+    name: ciostream ${{ matrix.arch }} ${{ matrix.platform }} ${{ matrix.spec }}
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        include:
+        - { platform: manylinux1, arch: x86_64, spec: cp36 }
+        - { platform: manylinux1, arch: x86_64, spec: cp37 }
+        - { platform: manylinux1, arch: x86_64, spec: cp38 }
+        - { platform: manylinux1, arch: x86_64, spec: cp39 }
+        - { platform: manylinux2014, arch: x86_64, spec: cp310 }
+        - { platform: manylinux2014, arch: x86_64, spec: cp311 }
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Fetch dependencies
+      run: |
+        set -eux
+        python3 --version
+        python3 -m pip install ivpm 
+        python3 -m ivpm update
+        ./packges/python/bin/python -m pip install cython setuptools wheel auditwheel build
+    - name: Build wheel
+      run: |
+        ./packages/python/bin/python setup.py bdist_wheel
+        ./packages/python/bin/auditwheel dist/*.whl
+    - name: Publish to PyPi
+      if: startsWith(github.ref, 'refs/heads/main')
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        ./packages/python/bin/twine  upload dist/*.whl
+
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,3 +52,62 @@ jobs:
       - name: Build wheel
         run: |
           ./packages/python/bin/python setup.py bdist_wheel
+      - name: Publish to PyPi
+        if: startsWith(github.ref, 'refs/heads/main')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          ./packages/python/bin/twine  upload dist/*.whl
+
+  windows:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      matrix:
+        include:
+        - platform: windows-latest
+          build_arch: x64
+          python_arch: x64
+          spec: '3.8'
+        - platform: windows-latest
+          build_arch: x64
+          python_arch: x64
+          spec: '3.9'
+        - platform: windows-latest
+          build_arch: x64
+          python_arch: x64
+          spec: '3.10'
+        - platform: windows-latest
+          build_arch: x64
+          python_arch: x64
+          spec: '3.11'
+#        - platform: windows-latest
+#          build_arch: x64
+#          python_arch: x86
+#          spec: '3.10'
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: Install python ${{ matrix.spec }}
+      uses: actions/setup-python@v2
+      with:
+        architecture: ${{ matrix.python_arch }}
+        python-version: ${{ matrix.spec }}
+
+    - name: Build/Test Package
+      shell: bash
+      run: |
+        python -V
+        python -m pip install Cython wheel twine
+        python setup.py build bdist_wheel
+        ls dist
+
+    - name: Publish to PyPi
+      if: startsWith(github.ref, 'refs/heads/main')
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      shell: bash
+      run: |
+          python -m twine upload dist/*.whl

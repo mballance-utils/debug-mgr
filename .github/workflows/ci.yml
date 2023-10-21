@@ -19,7 +19,7 @@ jobs:
         done
     - name: Fetch source dependencies
       env:
-        IVPM_PYTHON: /opt/python/cp37-cp37m/bin/python
+        IVPM_PYTHON: /opt/python/cp310-cp310/bin/python
       run: |
         set -eux
         ${IVPM_PYTHON} -m pip install ivpm twine auditwheel
@@ -40,7 +40,7 @@ jobs:
         done
     - name: Audit Wheels
       env:
-        IVPM_PYTHON: /opt/python/cp37-cp37m/bin/python
+        IVPM_PYTHON: /opt/python/cp310-cp310/bin/python
       run: |
         for whl in dist/*.whl; do
           ${IVPM_PYTHON} -m auditwheel repair $whl

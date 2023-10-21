@@ -32,7 +32,10 @@ jobs:
         BUILD_NUM: ${{ github.run_id }}
       run: |
         set -eux
+        echo "Building core"
+        ./packages/python/bin/python setup.py build_ext --inplace
         for py in cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311; do 
+          echo "Building Wheel for ${py}"
           /opt/python/${py}/bin/python setup.py bdist_wheel
         done
     - name: Audit Wheels
@@ -40,7 +43,7 @@ jobs:
         IVPM_PYTHON: /opt/python/cp37-cp37m/bin/python
       run: |
         for whl in dist/*.whl; do
-          ${IVPM_PYTHON} repair $whl
+          ${IVPM_PYTHON} -m auditwheel repair $whl
         done
     - name: Publish to PyPi
       if: startsWith(github.ref, 'refs/heads/main')

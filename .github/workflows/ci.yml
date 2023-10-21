@@ -8,22 +8,23 @@ jobs:
   linux:
     name: ciostream ${{ matrix.arch }} ${{ matrix.platform }} ${{ matrix.spec }}
     runs-on: ubuntu-latest
-    strategy: 
-      matrix:
-        include:
-        - { platform: manylinux1, arch: x86_64, spec: cp36 }
-        - { platform: manylinux1, arch: x86_64, spec: cp37 }
-        - { platform: manylinux1, arch: x86_64, spec: cp38 }
-        - { platform: manylinux1, arch: x86_64, spec: cp39 }
-        - { platform: manylinux2014, arch: x86_64, spec: cp310 }
-        - { platform: manylinux2014, arch: x86_64, spec: cp311 }
+    container: quay.io/pypa/manylinux2014
     steps:
     - name: checkout
       uses: actions/checkout@v2
-    - name: Fetch dependencies
+    - name: Setup dependencies
       run: |
         set -eux
-        python3 --version
+        for py in cp37-cp37m cp38 cp38 cp39-cp39 cp310-cp310 cp311-cp311; do 
+          /opt/python/${py}/bin/python -m pip install ninja wheel cython
+        done
+    - name: Fetch source dependencies
+      env:
+        IVPM_PYTHON: /opt/python/cp37-cp37m/bin/python
+      run: |
+        set -eux
+        ${IVPM_PYTHON} -m pip install ivpm twine auditwheel
+        ${IVPM_PYTHON} -m ivpm update -a
         python3 -m pip install ivpm 
         python3 -m ivpm update
         ls packages/python
@@ -33,8 +34,17 @@ jobs:
       env:
         BUILD_NUM: ${{ github.run_id }}
       run: |
-        ./packages/python/bin/python setup.py bdist_wheel
-        ./packages/python/bin/auditwheel repair dist/*.whl
+        set -eux
+        for py in cp37-cp37m cp38 cp38 cp39-cp39 cp310-cp310 cp311-cp311; do 
+          /opt/python/${py}/bin/python setup.py bdist_wheel
+        done
+    - name: Audit Wheels
+      env:
+        IVPM_PYTHON: /opt/python/cp37-cp37m/bin/python
+      run: |
+        for whl in dist/*.whl; do
+          ${IVPM_PYTHON} repair $whl
+        done
     - name: Publish to PyPi
       if: startsWith(github.ref, 'refs/heads/main')
       env:
@@ -51,7 +61,7 @@ jobs:
         run: |
           python3 --version
           python3 -m pip install ivpm
-          python3 -m ivpm update
+          python3 -m ivpm update -a
           ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
       - name: Build wheel
         env:
@@ -108,7 +118,7 @@ jobs:
       run: |
         python -V
         python -m pip install ivpm
-        python -m ivpm update
+        python -m ivpm update -a
         ls packages/python
         ls packages/python/Lib
         ls packages/python/Scripts

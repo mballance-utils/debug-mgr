@@ -41,21 +41,21 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        ./packages/python/bin/twine  upload dist/*.whl
+        ./packages/python/bin/twine  upload wheelhouse/*.whl
 
   macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - name: Fetch dependencies
-        env:
-          BUILD_NUM: ${{ github.run_id }}
         run: |
           python3 --version
           python3 -m pip install ivpm
           python3 -m ivpm update
           ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
       - name: Build wheel
+        env:
+          BUILD_NUM: ${{ github.run_id }}
         run: |
           ./packages/python/bin/python3 setup.py bdist_wheel
       - name: Publish to PyPi
@@ -112,8 +112,8 @@ jobs:
         ls packages/python
         ls packages/python/Lib
         ls packages/python/Scripts
-        ./packages/python/bin/python -m pip install cython setuptools wheel build twine
-        ./packages/python/bin/python setup.py build bdist_wheel
+        ./packages/python/Scripts/python -m pip install cython setuptools wheel build twine
+        ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist
 
     - name: Publish to PyPi
@@ -123,4 +123,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       shell: bash
       run: |
-          ./packages/python/bin/twine -m twine upload dist/*.whl
+          ./packages/python/Scripts/python -m twine upload dist/*.whl

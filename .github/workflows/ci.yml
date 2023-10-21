@@ -32,7 +32,7 @@ jobs:
     - name: Build wheel
       run: |
         ./packages/python/bin/python setup.py bdist_wheel
-        ./packages/python/bin/auditwheel dist/*.whl
+        ./packages/python/bin/auditwheel repair dist/*.whl
     - name: Publish to PyPi
       if: startsWith(github.ref, 'refs/heads/main')
       env:
@@ -50,8 +50,6 @@ jobs:
           python3 --version
           python3 -m pip install ivpm
           python3 -m ivpm update
-          ls packages/python
-          ls packages/python/bin
           ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
       - name: Build wheel
         run: |
@@ -105,6 +103,9 @@ jobs:
         python -V
         python -m pip install ivpm
         python -m ivpm update
+        ls packages/python
+        ls packages/python/lib
+        ls packages/python/bin
         ./packages/python/bin/python -m pip install cython setuptools wheel build twine
         ./packages/python/bin/python setup.py build bdist_wheel
         ls dist

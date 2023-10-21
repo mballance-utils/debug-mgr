@@ -97,10 +97,6 @@ jobs:
           build_arch: x64
           python_arch: x64
           spec: '3.11'
-#        - platform: windows-latest
-#          build_arch: x64
-#          python_arch: x86
-#          spec: '3.10'
     steps:
     - name: checkout
       uses: actions/checkout@v2
@@ -119,9 +115,6 @@ jobs:
         python -V
         python -m pip install ivpm
         python -m ivpm update -a
-        ls packages/python
-        ls packages/python/Lib
-        ls packages/python/Scripts
         ./packages/python/Scripts/python -m pip install cython setuptools wheel build twine
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist

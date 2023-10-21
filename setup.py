@@ -196,7 +196,7 @@ if sys.platform == "win32":
     ]
 else:
     package_data = [
-        "%debug-mgr.%s" % (libpref, libext)
+        "%sdebug-mgr.%s" % (libpref, libext)
     ]
 
 ext = Extension("debug_mgr.core",

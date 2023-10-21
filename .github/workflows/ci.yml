@@ -8,7 +8,7 @@ jobs:
   linux:
     name: ciostream ${{ matrix.arch }} ${{ matrix.platform }} ${{ matrix.spec }}
     runs-on: ubuntu-latest
-    container: quay.io/pypa/manylinux2014
+    container: quay.io/pypa/manylinux2014_x86_64
     steps:
     - name: checkout
       uses: actions/checkout@v2

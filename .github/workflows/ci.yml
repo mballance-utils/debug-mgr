@@ -28,7 +28,7 @@ jobs:
         python3 -m ivpm update
         ls packages/python
         ls packages/python/bin
-        ./packages/python/bin/python -m pip install cython setuptools wheel auditwheel build
+        ./packages/python/bin/python -m pip install cython setuptools wheel auditwheel build twine
     - name: Build wheel
       run: |
         ./packages/python/bin/python setup.py bdist_wheel
@@ -52,7 +52,7 @@ jobs:
           python3 -m ivpm update
           ls packages/python
           ls packages/python/bin
-          ./packages/python/bin/python3 -m pip install cython setuptools wheel build
+          ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
       - name: Build wheel
         run: |
           ./packages/python/bin/python3 setup.py bdist_wheel
@@ -103,8 +103,10 @@ jobs:
       shell: bash
       run: |
         python -V
-        python -m pip install Cython wheel twine
-        python setup.py build bdist_wheel
+        python -m pip install ivpm
+        python -m ivpm update
+        ./packages/python/bin/python -m pip install cython setuptools wheel build twine
+        ./packages/python/bin/python setup.py build bdist_wheel
         ls dist
 
     - name: Publish to PyPi
@@ -114,4 +116,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       shell: bash
       run: |
-          python -m twine upload dist/*.whl
+          ./packages/python/bin/twine -m twine upload dist/*.whl

@@ -154,14 +154,24 @@ class build_ext(_build_ext):
 
         if sys.platform == "darwin":
             ext = ".dylib"
+        elif sys.platform == "win32":
+            ext = ".dll"
         else:
             ext = ".so"
 
-        pref = "lib"
+        if sys.platform == "win32":
+            pref = ""
+        else:
+            pref = "lib"
 
         copy_file(
             os.path.join(cwd, "build", "src", "%sdebug-mgr%s" % (pref, ext)),
             os.path.join(package_dir, "%sdebug-mgr%s" % (pref, ext)))
+        
+        if sys.platform == "win32":
+            copy_file(
+                os.path.join(cwd, "build", "src", "debug-mgr.lib" ),
+                os.path.join(package_dir, "debug-mgr.lib" % (pref, ext)))
 
         dest_filename = os.path.join(package_dir, filename)
         
@@ -171,10 +181,23 @@ print("extra_compile_args=" + str(extra_compile_args))
 
 if sys.platform == "darwin":
     libext = ".dylib"
+    libpref = "lib"
+elif sys.platform == "win32":
+    libext = ".dll"
+    libpref = "lib"
 else:
     libext = ".so"
+    libpref = "lib"
 
-libpref = "lib"
+if sys.platform == "win32":
+    package_data = [
+        "debug-mgr.dll",
+        "debug-mgr.lib"
+    ]
+else:
+    package_data = [
+        "%sdebug-mgr.%s" % (libpref, libext)
+    ]
 
 ext = Extension("debug_mgr.core",
             extra_compile_args=extra_compile_args,
@@ -194,7 +217,7 @@ setup(
   version=version,
   packages=['debug_mgr'],
   package_dir = {'' : 'python'},
-  package_data={ 'debug_mgr': ["%sdebug-mgr%s" % (libpref, libext)] },
+  package_data={ 'debug_mgr': package_data },
   author = "Matthew Ballance",
   author_email = "matt.ballance@gmail.com",
   description = ("Simple debug manager for use of C++ Python extensions"),

@@ -5,6 +5,8 @@
  *      Author: mballance
  */
 #include <stdexcept>
+#include <stdlib.h>
+#include <unistd.h>
 #include "DebugMgr.h"
 #include "DebugOutFile.h"
 #include "Debug.h"
@@ -13,6 +15,11 @@ namespace dmgr {
 
 DebugMgr::DebugMgr() : m_out(new DebugOutFile(stdout, false)) {
 	m_en = false;
+
+    const char *level = getenv("DEBUG_MGR_EN");
+    if (level && level[0]) {
+        m_en = strtoul(level, 0, 0);
+    }
 }
 
 DebugMgr::~DebugMgr() {

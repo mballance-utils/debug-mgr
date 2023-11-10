@@ -43,7 +43,7 @@ public:
 
 private:
     DebugMgrUP                  m_dbg_mgr;
-    static FactoryUP            m_inst;
+    static Factory              *m_inst;
 };
 
 }

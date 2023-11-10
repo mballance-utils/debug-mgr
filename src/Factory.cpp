@@ -50,12 +50,12 @@ IDebugOutList *Factory::mkDebugOutList() {
 
 IFactory *Factory::inst() {
     if (!m_inst) {
-        m_inst = FactoryUP(new Factory());
+        m_inst = new Factory();
     }
-    return m_inst.get();
+    return m_inst;
 }
 
-FactoryUP Factory::m_inst;
+Factory *Factory::m_inst = 0;
 
 extern "C" IFactory *debug_mgr_getFactory() {
     fprintf(stdout, "debug_mgr_getFactory() %p\n",

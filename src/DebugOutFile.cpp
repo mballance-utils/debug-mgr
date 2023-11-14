@@ -25,7 +25,8 @@
 namespace dmgr {
 
 
-DebugOutFile::DebugOutFile(FILE *fp, bool close_fp) : m_fp(fp), m_close_fp(close_fp) {
+DebugOutFile::DebugOutFile(FILE *fp, bool close_fp) : 
+    m_fp(fp), m_close_fp(close_fp), m_flush(false) {
 
 }
 
@@ -40,18 +41,27 @@ void DebugOutFile::enter(IDebug *dbg, const char *fmt, va_list ap) {
 	fprintf(m_fp, "--> %s::", dbg->name().c_str());
 	vfprintf(m_fp, fmt, ap);
 	fputs("\n", m_fp);
+    if (m_flush) {
+        fflush(m_fp);
+    }
 }
 
 void DebugOutFile::leave(IDebug *dbg, const char *fmt, va_list ap) {
 	fprintf(m_fp, "<-- %s::", dbg->name().c_str());
 	vfprintf(m_fp, fmt, ap);
 	fputs("\n", m_fp);
+    if (m_flush) {
+        fflush(m_fp);
+    }
 }
 
 void DebugOutFile::debug(IDebug *dbg, const char *fmt, va_list ap) {
 	fprintf(m_fp, "%s: ", dbg->name().c_str());
 	vfprintf(m_fp, fmt, ap);
 	fputs("\n", m_fp);
+    if (m_flush) {
+        fflush(m_fp);
+    }
 }
 
 void DebugOutFile::fatal(IDebug *dbg, const char *fmt, va_list ap) {

@@ -15,10 +15,24 @@ cdef class Factory(object):
 
         if _inst is None:
             ext_dir = os.path.dirname(os.path.abspath(__file__))
-            so = ctypes.cdll.LoadLibrary(os.path.join(
-                ext_dir,
-                "libdebug-mgr.so"
-            ))
+
+            build_dir = os.path.abspath(os.path.join(ext_dir, "../../build"))
+
+            # First, look in the build directory
+            core_lib = None
+            libname = "libdebug-mgr.so"
+            for libdir in ("lib", "lib64"):
+                if os.path.isfile(os.path.join(build_dir, libdir, libname)):
+                    core_lib = os.path.join(build_dir, libdir, libname)
+                    break
+            if core_lib is None:
+                core_lib = os.path.join(ext_dir, libname)
+
+            if not os.path.isfile(core_lib):
+                raise Exception("Extension library core \"%s\" doesn't exist" % core_lib)
+
+            so = ctypes.cdll.LoadLibrary(core_lib)
+
             func = so.debug_mgr_getFactory
             func.restype = ctypes.c_void_p
 

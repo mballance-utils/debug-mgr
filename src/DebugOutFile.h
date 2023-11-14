@@ -41,6 +41,7 @@ public:
 private:
     FILE                *m_fp;
     bool                m_close_fp;
+    bool                m_flush;
 
 
 };

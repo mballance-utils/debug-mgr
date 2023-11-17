@@ -75,6 +75,10 @@ void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
     m_out->debug(dbg, fmt, ap);
 }
 
+void DebugMgr::error(IDebug *dbg, const char *fmt, va_list ap) {
+    m_out->error(dbg, fmt, ap);
+}
+
 void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     m_out->fatal(dbg, fmt, ap);
     throw std::runtime_error("");

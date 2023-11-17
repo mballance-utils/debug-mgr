@@ -33,6 +33,7 @@ public:
 	virtual void enter(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void leave(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) = 0;
+	virtual void error(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) = 0;
 
 

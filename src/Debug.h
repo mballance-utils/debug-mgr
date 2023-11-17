@@ -42,6 +42,8 @@ public:
 
 	void debug(const char *fmt, ...);
 
+    virtual void error(const char *fmt, ...) override;
+
     virtual void fatal(const char *fmt, ...) override;
 
 private:

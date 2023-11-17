@@ -64,6 +64,13 @@ void DebugOutFile::debug(IDebug *dbg, const char *fmt, va_list ap) {
     }
 }
 
+void DebugOutFile::error(IDebug *dbg, const char *fmt, va_list ap) {
+    fprintf(m_fp, "Error: %s: ", dbg->name().c_str());
+    vfprintf(m_fp, fmt, ap);
+    fputs("\n", m_fp);
+    fflush(m_fp);
+}
+
 void DebugOutFile::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     fprintf(m_fp, "Fatal: %s: ", dbg->name().c_str());
     vfprintf(m_fp, fmt, ap);

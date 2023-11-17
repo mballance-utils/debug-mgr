@@ -20,11 +20,13 @@ cdef class Factory(object):
 
             # First, look in the build directory
             core_lib = None
+
+            # TODO: check already-loaded libraries for libdebug-mgr symbols?
             libname = "libdebug-mgr.so"
-            for libdir in ("lib", "lib64"):
-                if os.path.isfile(os.path.join(build_dir, libdir, libname)):
-                    core_lib = os.path.join(build_dir, libdir, libname)
-                    break
+            # for libdir in ("lib", "lib64"):
+            #     if os.path.isfile(os.path.join(build_dir, libdir, libname)):
+            #         core_lib = os.path.join(build_dir, libdir, libname)
+            #         break
             if core_lib is None:
                 core_lib = os.path.join(ext_dir, libname)
 

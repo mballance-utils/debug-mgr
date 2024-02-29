@@ -119,7 +119,8 @@ jobs:
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
         #export PATH="./packages/python/Scripts:${PATH}"
         $env:Path += ';$pwd/packages/python/Scripts'
-        #which ninja
+        echo "PATH: %env.Path"
+        which ninja
         #which cl
         echo "BUILD_NUM=$env:BUILD_NUM" > python/debug_mgr/__build_num__.py
         ./packages/python/Scripts/python setup.py build bdist_wheel

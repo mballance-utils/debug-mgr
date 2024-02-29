@@ -14,6 +14,8 @@ package:
        url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
      - name: ninja
        src: pypi
+     - name: ivpm
+       url: https://github.com/fvutils/ivpm.git
 
    deps:
      - name: cython

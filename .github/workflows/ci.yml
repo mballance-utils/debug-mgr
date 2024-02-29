@@ -118,8 +118,9 @@ jobs:
         python -m ivpm update -a
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
         #export PATH="./packages/python/Scripts:${PATH}"
-        $env:Path += ';$pwd/packages/python/Scripts'
-        echo "PATH: %env.Path"
+        $env:Path += ';$PWD.Path/packages/python/Scripts'
+        $env:Path += ';./packages/python/Scripts'
+        echo "PATH: $env.Path"
         which ninja
         #which cl
         echo "BUILD_NUM=$env:BUILD_NUM" > python/debug_mgr/__build_num__.py

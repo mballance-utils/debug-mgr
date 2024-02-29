@@ -113,24 +113,14 @@ jobs:
       with:
         arch: ${{ matrix.build_arch }}
     - name: Build/Test Package
-#      shell: bash
       env:
         BUILD_NUM: ${{ github.run_id }}
       run: |
         python -m pip install ivpm
         python -m ivpm update -a
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
-        #export PATH="./packages/python/Scripts:${PATH}"
-        $env:Path += ';$PWD.Path/packages/python/Scripts'
-        $env:Path += ';./packages/python/Scripts'
-        echo "PATH: $env:Path"
-        which ninja
-        which cl
-        which clang
-        #vcvars64.bat
         echo "BUILD_NUM=$env:BUILD_NUM" > python/debug_mgr/__build_num__.py
         ./packages/python/Scripts/python setup.py build bdist_wheel
-        ls dist
 
     - name: Publish to PyPi
       if: startsWith(github.ref, 'refs/heads/main')

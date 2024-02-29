@@ -11,8 +11,9 @@ version="0.0.2"
 try:
     from .__build_num__ import BUILD_NUM
     version += ".%s" % str(BUILD_NUM)
-except ImportError:
-    pass
+    print("import build_num: version=%s" % version)
+except ImportError as e:
+    print("failed to import build_num: %s" % str(e))
 
 isSrcBuild = False
 proj_dir = os.path.dirname(os.path.abspath(__file__))

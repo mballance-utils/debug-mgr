@@ -109,6 +109,9 @@ jobs:
         architecture: ${{ matrix.python_arch }}
         python-version: ${{ matrix.spec }}
 
+    - uses: ilammy/msvc-dev-cmd@v1.13.0
+      with:
+        arch: ${{ matrix.build_arch }}
     - name: Build/Test Package
 #      shell: bash
       env:
@@ -124,7 +127,7 @@ jobs:
         which ninja
         which cl
         which clang
-        vcvars64.bat
+        #vcvars64.bat
         echo "BUILD_NUM=$env:BUILD_NUM" > python/debug_mgr/__build_num__.py
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist

@@ -119,6 +119,9 @@ jobs:
         python -m ivpm update -a
         ./packages/python/Scripts/python -m pip install cython setuptools wheel build twine
         echo "BUILD_NUM=${BUILD_NUM}" > python/debug_mgr/__build_num__.py
+        export PATH=/c/msys64/mingw64/bin:${PATH}
+        echo "which clang"
+        which clang
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist
 

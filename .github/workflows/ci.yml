@@ -118,6 +118,8 @@ jobs:
         python -m pip install ivpm
         python -m ivpm update -a
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
+        export PATH="./packages/python/Scripts:${PATH}"
+        which ninja
         echo "BUILD_NUM=${BUILD_NUM}" > python/debug_mgr/__build_num__.py
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist

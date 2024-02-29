@@ -6,7 +6,9 @@
  */
 #include <stdexcept>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include "DebugMgr.h"
 #include "DebugOutFile.h"
 #include "Debug.h"

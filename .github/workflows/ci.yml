@@ -122,6 +122,8 @@ jobs:
         export PATH=/c/msys64/mingw64/bin:${PATH}
         echo "which clang"
         which clang
+        which cmake
+        cmake --version
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist
 

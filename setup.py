@@ -8,15 +8,19 @@ from setuptools.extension import Extension
 
 version="0.0.2"
 
+proj_dir = os.path.dirname(os.path.abspath(__file__))
+
 try:
-    from .__build_num__ import BUILD_NUM
+    import sys
+    print("proj_dir: %s" % proj_dir)
+    sys.path.insert(0, os.path.join(proj_dir, "python"))
+    from debug_mgr.__build_num__ import BUILD_NUM
     version += ".%s" % str(BUILD_NUM)
     print("import build_num: version=%s" % version)
 except ImportError as e:
     print("failed to import build_num: %s" % str(e))
 
 isSrcBuild = False
-proj_dir = os.path.dirname(os.path.abspath(__file__))
 
 try:
     from ivpm.setup import setup

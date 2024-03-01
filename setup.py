@@ -64,6 +64,11 @@ setup_args = dict(
     'setuptools_scm',
     'cython'
   ],
+  entry_points={
+    "ivpm.pkginfo": [
+        'debug-mgr = debug_mgr.pkginfo:PkgInfo'
+    ]
+  },
   ext_modules=[ ext ],
 )
 

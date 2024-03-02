@@ -23,8 +23,7 @@ except ImportError as e:
 isSrcBuild = False
 
 try:
-#    from ivpm.setup import setup
-    from setuptools import setup
+    from ivpm.setup import setup
     isSrcBuild = os.path.isdir(os.path.join(proj_dir, "src"))
     print("debug-mgr: running IVPM")
 except ImportError as e:
@@ -46,7 +45,7 @@ ext = Extension("debug_mgr.core",
 ext.cython_directives={'language_level' : '3'}
 
 setup_args = dict(
-  name = "debug_mgr",
+  name="debug-mgr",
   version=version,
   packages=find_namespace_packages(where='python'),
   package_dir = {'' : 'python'},
@@ -69,6 +68,9 @@ setup_args = dict(
   entry_points={
     "ivpm.pkginfo": [
         'debug_mgr = debug_mgr.pkginfo:PkgInfo'
+    ],
+    'console_scripts': [
+      'debug-mgr = debug_mgr.__main__:main'
     ]
   },
   ext_modules=[ ext ],

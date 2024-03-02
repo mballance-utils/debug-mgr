@@ -4,7 +4,7 @@
 import os
 import subprocess
 import sys
-from setuptools.extension import Extension
+from setuptools import Extension, find_namespace_packages
 
 version="0.0.2"
 
@@ -25,10 +25,11 @@ isSrcBuild = False
 try:
     from ivpm.setup import setup
     isSrcBuild = os.path.isdir(os.path.join(proj_dir, "src"))
+    print("debug-mgr: running IVPM")
 except ImportError as e:
     # We're running in an independent environment
     from setuptools import setup
-    print("Running setuptools: %s" % str(e))
+    print("debug-mgr: running setuptools: %s" % str(e))
 
 if isSrcBuild:
     incdir = os.path.join(proj_dir, "src", "include")
@@ -46,7 +47,7 @@ ext.cython_directives={'language_level' : '3'}
 setup_args = dict(
   name = "debug-mgr",
   version=version,
-  packages=['debug_mgr'],
+  packages=find_namespace_packages(where='python'),
   package_dir = {'' : 'python'},
 #  package_data={ 'debug_mgr': package_data },
   author = "Matthew Ballance",
@@ -66,7 +67,7 @@ setup_args = dict(
   ],
   entry_points={
     "ivpm.pkginfo": [
-        'debug-mgr = debug_mgr.pkginfo:PkgInfo'
+        'debug_mgr = debug_mgr.pkginfo:PkgInfo'
     ]
   },
   ext_modules=[ ext ],

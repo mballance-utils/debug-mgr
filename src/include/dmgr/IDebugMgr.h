@@ -22,6 +22,8 @@ public:
 
 	virtual void enable(bool en) = 0;
 
+    virtual void registerSignalHandlers() = 0;
+
 	virtual void addDebug(IDebug *dbg) = 0;
 
 	virtual IDebug *findDebug(const std::string &name) = 0;

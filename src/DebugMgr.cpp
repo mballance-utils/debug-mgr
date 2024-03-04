@@ -6,15 +6,21 @@
  */
 #include <stdexcept>
 #include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>
 #include "DebugMgr.h"
 #include "DebugOutFile.h"
 #include "Debug.h"
+#include "Factory.h"
 
 namespace dmgr {
 
-DebugMgr::DebugMgr() : m_out(new DebugOutFile(stdout, false)) {
+DebugMgr::DebugMgr() : 
+    m_signal_handlers_registered(false),
+    m_out(new DebugOutFile(stdout, false)) {
 	m_en = false;
+
+    m_dbg = findDebug("dmgr");
 
     const char *level = getenv("DEBUG_MGR_EN");
     if (level && level[0]) {
@@ -37,6 +43,14 @@ void DebugMgr::enable(bool en) {
 		}
 		it->second->set_en(m_en);
 	}
+}
+
+void DebugMgr::registerSignalHandlers() {
+    if (!m_signal_handlers_registered) {
+        m_signal_handlers_registered = true;
+        signal(SIGSEGV, &DebugMgr::signal_handler);
+        signal(SIGBUS, &DebugMgr::signal_handler);
+    }
 }
 
 void DebugMgr::addDebug(IDebug *dbg) {
@@ -77,6 +91,7 @@ void DebugMgr::debug(IDebug *dbg, const char *fmt, va_list ap) {
 
 void DebugMgr::error(IDebug *dbg, const char *fmt, va_list ap) {
     m_out->error(dbg, fmt, ap);
+    m_out->flush();
 }
 
 void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
@@ -87,5 +102,16 @@ void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
 void DebugMgr::flush() {
     m_out->flush();
 }
+
+void DebugMgr::signal_handler(int sigid) {
+    dynamic_cast<DebugMgr *>(Factory::inst())->crash_handler();
+}
+
+void DebugMgr::crash_handler() {
+    m_dbg->error("Application Crashed");
+    flush();
+    _exit(1);
+}
+
 
 } /* namespace dmgr */

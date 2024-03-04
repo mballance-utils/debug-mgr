@@ -30,6 +30,8 @@ public:
 
 	virtual void enable(bool en) override;
 
+    virtual void registerSignalHandlers() override;
+
 	virtual void addDebug(IDebug *dbg) override;
 
 	virtual IDebug *findDebug(const std::string &name) override;
@@ -58,7 +60,14 @@ public:
     virtual void flush() override;
 
 private:
+    static void signal_handler(int sigid);
+
+    void crash_handler();
+
+private:
 	bool											m_en;
+    bool                                            m_signal_handlers_registered;
+    IDebug                                          *m_dbg;
     IDebugOutUP                                     m_out;
 	std::unordered_map<std::string, int32_t>		m_debug_en_m;
 	std::unordered_map<std::string, IDebug *>		m_debug_ep_m;

@@ -30,17 +30,23 @@ public:
 
 	virtual ~Debug();
 
-	inline bool en() const { return m_en; }
+	inline bool en() const override { 
+        return m_en; 
+    }
 
-	void set_en(bool en) { m_en = en; }
+	void set_en(bool en) override { 
+        m_en = en; 
+    }
 
-	const std::string &name() const { return m_name; }
+	const std::string &name() const override { 
+        return m_name; 
+    }
 
-	void enter(const char *fmt, ...);
+	void enter(const char *fmt, ...) override;
 
-	void leave(const char *fmt, ...);
+	void leave(const char *fmt, ...) override;
 
-	void debug(const char *fmt, ...);
+	void debug(const char *fmt, ...) override;
 
     virtual void error(const char *fmt, ...) override;
 

@@ -6,8 +6,10 @@
  */
 #include <stdexcept>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <signal.h>
 #include <unistd.h>
+#endif
 #include "DebugMgr.h"
 #include "DebugOutFile.h"
 #include "Debug.h"
@@ -48,8 +50,10 @@ void DebugMgr::enable(bool en) {
 void DebugMgr::registerSignalHandlers() {
     if (!m_signal_handlers_registered) {
         m_signal_handlers_registered = true;
+#ifndef _WIN32
         signal(SIGSEGV, &DebugMgr::signal_handler);
         signal(SIGBUS, &DebugMgr::signal_handler);
+#endif
     }
 }
 

@@ -67,7 +67,7 @@ setup_args = dict(
   ],
   entry_points={
     "ivpm.pkginfo": [
-        'debug_mgr = debug_mgr.pkginfo:PkgInfo'
+        'debug-mgr = debug_mgr.pkginfo:PkgInfo'
     ],
     'console_scripts': [
       'debug-mgr = debug_mgr.__main__:main'

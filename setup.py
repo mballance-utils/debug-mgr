@@ -4,7 +4,13 @@
 import os
 import subprocess
 import sys
+import platform
 from setuptools import Extension, find_namespace_packages
+
+if "IVPM_PYTHONPATH" in os.environ.keys():
+    ps = ";" if platform.system() == "Windows" else ":"
+    for i,p in enumerate(os.environ["IVPM_PYTHONPATH"].split(ps)):
+        sys.path.insert(i, p)
 
 version="0.0.2"
 
@@ -44,6 +50,13 @@ ext = Extension("debug_mgr.core",
             include_dirs=[incdir])
 ext.cython_directives={'language_level' : '3'}
 
+setup_requires=['setuptools_scm', 'cython']
+
+#if isSrcBuild:
+#    setup_requires.append('ivpm')
+#else:
+#    setup_requires.append('ivpm')
+
 setup_args = dict(
   name="debug-mgr",
   version=version,
@@ -61,10 +74,7 @@ setup_args = dict(
   url = "https://github.com/mballance/debug-mgr",
   install_requires=[
   ],
-  setup_requires=[
-    'setuptools_scm',
-    'cython'
-  ],
+  setup_requires=setup_requires,
   entry_points={
     "ivpm.pkginfo": [
         'debug-mgr = debug_mgr.pkginfo:PkgInfo'

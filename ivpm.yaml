@@ -21,6 +21,8 @@ package:
    deps:
      - name: cython
        src: pypi
+     - name: ninja
+       src: pypi
      - name: gtest
        url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
        

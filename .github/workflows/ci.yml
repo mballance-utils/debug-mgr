@@ -35,7 +35,6 @@ jobs:
     - name: Build packages
       run: |
         echo "BUILD_NUM=$GITHUB_RUN_ID" >> python/debug_mgr/__build_num__.py
-        ./packages/python/bin/pip install -e `pwd`/packages/ciostream
         ./packages/python/bin/python setup.py bdist_wheel
     - name: Audit Wheels
       run: |

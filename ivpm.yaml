@@ -15,7 +15,8 @@ package:
      - name: ninja
        src: pypi
      - name: ivpm
-       url: https://github.com/fvutils/ivpm.git
+       src: pypi
+     #  url: https://github.com/fvutils/ivpm.git
 
    deps:
      - name: cython

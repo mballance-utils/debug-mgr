@@ -108,7 +108,7 @@ void DebugMgr::flush() {
 }
 
 void DebugMgr::signal_handler(int sigid) {
-    dynamic_cast<DebugMgr *>(Factory::inst())->crash_handler();
+    dynamic_cast<DebugMgr *>(Factory::inst()->getDebugMgr())->crash_handler();
 }
 
 void DebugMgr::crash_handler() {

@@ -41,7 +41,7 @@ void DebugMgr::enable(bool en) {
 		it=m_debug_ep_m.begin();
 		it!=m_debug_ep_m.end(); it++) {
 		if (en != it->second->en()) {
-			fprintf(stdout, "DebugMgr: %s %s\n", (en)?"Enable":"Disable", it->second->name().c_str());
+//			fprintf(stdout, "DebugMgr: %s %s\n", (en)?"Enable":"Disable", it->second->name().c_str());
 		}
 		it->second->set_en(m_en);
 	}

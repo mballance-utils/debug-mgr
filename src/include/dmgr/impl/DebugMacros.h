@@ -15,13 +15,13 @@
     if (m_dbg && m_dbg->en()) m_dbg->leave(fmt, ##__VA_ARGS__)
 #define DEBUG(fmt, ...) \
     if (m_dbg && m_dbg->en()) m_dbg->debug(fmt, ##__VA_ARGS__)
-#define ERROR(fmt, ...) \
+#define DEBUG_ERROR(fmt, ...) \
     if (m_dbg) m_dbg->error(fmt, ##__VA_ARGS__); else { \
         fprintf(stdout, "Error: "); \
         fprintf(stdout, fmt, ##__VA_ARGS__); \
         fprintf(stdout, "\n"); \
         fflush(stdout); }
-#define FATAL(fmt, ...) \
+#define DEBUG_FATAL(fmt, ...) \
     if (m_dbg) m_dbg->fatal(fmt, ##__VA_ARGS__)
 
 #endif

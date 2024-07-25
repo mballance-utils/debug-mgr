@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         include:
-        - pyversion: 'cp37-cp37m'
         - pyversion: 'cp38-cp38'
         - pyversion: 'cp39-cp39'
         - pyversion: 'cp310-cp310'
@@ -49,6 +48,7 @@ jobs:
           - pyversion: '3.9'
           - pyversion: '3.10'
           - pyversion: '3.11'
+          - pyversion: '3.12'
     steps:
       - uses: actions/checkout@v2
       - name: Install python ${{ matrix.pyversion }}
@@ -77,39 +77,27 @@ jobs:
           ./packages/python/bin/python3 -m twine  upload dist/*.whl
 
   windows:
-    runs-on: ${{ matrix.platform }}
+    runs-on: windows-latest
     strategy:
       matrix:
         include:
-        - platform: windows-latest
-          build_arch: x64
-          python_arch: x64
-          spec: '3.8'
-        - platform: windows-latest
-          build_arch: x64
-          python_arch: x64
-          spec: '3.9'
-        - platform: windows-latest
-          build_arch: x64
-          python_arch: x64
-          spec: '3.10'
-        - platform: windows-latest
-          build_arch: x64
-          python_arch: x64
-          spec: '3.11'
+          - pyversion: '3.8'
+          - pyversion: '3.9'
+          - pyversion: '3.10'
+          - pyversion: '3.11'
+          - pyversion: '3.12'
     steps:
     - name: checkout
       uses: actions/checkout@v4
 
-    - name: Install python ${{ matrix.spec }}
+    - name: Install python ${{ matrix.pyversion }}
       uses: actions/setup-python@v4
       with:
-        architecture: ${{ matrix.python_arch }}
-        python-version: ${{ matrix.spec }}
+        python-version: ${{ matrix.pyversion }}
 
     - uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
-        arch: ${{ matrix.build_arch }}
+        arch: x64
     - name: Build/Test Package
       env:
         BUILD_NUM: ${{ github.run_id }}

@@ -16,8 +16,6 @@ package:
       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
     - name: ninja
       src: pypi
-    - name: ivpm
-      src: pypi
 
   - name: default
     deps:

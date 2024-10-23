@@ -62,7 +62,9 @@ setup_args = dict(
   version=version,
   packages=find_namespace_packages(where='python'),
   package_dir = {'' : 'python'},
-#  package_data={ 'debug_mgr': package_data },
+  package_data={ 'debug_mgr': [
+      "core.pxd",
+      "decl.pxd" ]},
   author = "Matthew Ballance",
   author_email = "matt.ballance@gmail.com",
   description = ("Simple debug manager for use of C++ Python extensions"),

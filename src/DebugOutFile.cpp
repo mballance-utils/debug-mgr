@@ -18,12 +18,12 @@
  * Created on:
  *     Author:
  */
-#include <alloca.h>
 #include <stdio.h>
 #include <string.h>
 #include "dmgr/IDebug.h"
 #include "DebugOutFile.h"
 #ifndef _WIN32
+#include <alloca.h>
 #include <unistd.h>
 #include <execinfo.h>
 #endif

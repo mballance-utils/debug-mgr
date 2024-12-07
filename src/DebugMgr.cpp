@@ -53,6 +53,7 @@ void DebugMgr::registerSignalHandlers() {
 #ifndef _WIN32
         signal(SIGSEGV, &DebugMgr::signal_handler);
         signal(SIGBUS, &DebugMgr::signal_handler);
+        signal(SIGILL, &DebugMgr::signal_handler);
 #endif
     }
 }
@@ -103,6 +104,10 @@ void DebugMgr::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     throw std::runtime_error("");
 }
 
+void DebugMgr::crashClose() {
+
+}
+
 void DebugMgr::flush() {
     m_out->flush();
 }
@@ -113,7 +118,7 @@ void DebugMgr::signal_handler(int sigid) {
 
 void DebugMgr::crash_handler() {
     m_dbg->error("Application Crashed");
-    flush();
+    m_out->crashClose();
     _exit(1);
 }
 

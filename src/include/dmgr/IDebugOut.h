@@ -39,6 +39,8 @@ public:
 	virtual void error(IDebug *dbg, const char *fmt, va_list ap) = 0;
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) = 0;
 
+    virtual void crashClose() = 0;
+
     virtual void flush() = 0;
 
 };

@@ -42,6 +42,9 @@ public:
 	virtual void debug(IDebug *dbg, const char *fmt, va_list ap) override;
 	virtual void error(IDebug *dbg, const char *fmt, va_list ap) override;
 	virtual void fatal(IDebug *dbg, const char *fmt, va_list ap) override;
+
+    virtual void crashClose() override;
+
     virtual void flush() override;
 
 private:

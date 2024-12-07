@@ -36,6 +36,8 @@ public:
 
     virtual IDebugOut *mkDebugOutFile(FILE *fp, bool close_fp) = 0;
 
+    virtual IDebugOut *mkDebugOutPath(const std::string &name) = 0;
+
     virtual IDebugOutList *mkDebugOutList() = 0;
 
 };

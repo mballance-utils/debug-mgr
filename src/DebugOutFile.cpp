@@ -18,12 +18,24 @@
  * Created on:
  *     Author:
  */
+#include <alloca.h>
+#include <stdio.h>
+#include <string.h>
 #include "dmgr/IDebug.h"
 #include "DebugOutFile.h"
+#ifndef _WIN32
+#include <unistd.h>
+#include <execinfo.h>
+#endif
 
 
 namespace dmgr {
 
+DebugOutFile::DebugOutFile(const std::string &name) :
+    m_path(name), m_fp(0), m_close_fp(true) {
+
+    m_fp = fopen(name.c_str(), "w");
+}
 
 DebugOutFile::DebugOutFile(FILE *fp, bool close_fp) : 
     m_fp(fp), m_close_fp(close_fp), m_flush(false) {
@@ -76,6 +88,27 @@ void DebugOutFile::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     vfprintf(m_fp, fmt, ap);
     fputs("\n", m_fp);
     fflush(m_fp);
+}
+
+void DebugOutFile::crashClose() {
+    fflush(m_fp);
+#ifndef _WIN32
+    if (m_path.size()) {
+        static void *bt_buffer[64];
+        char *rename_path = (char *)alloca(m_path.size()+64);
+        int32_t bt_size;
+
+        bt_size = backtrace(bt_buffer, sizeof(bt_buffer)/sizeof(void *));
+
+        backtrace_symbols_fd(bt_buffer, bt_size, fileno(m_fp));
+
+        // Rename the file
+        fclose(m_fp);
+
+        sprintf(rename_path, "%s.%d", m_path.c_str(), getpid());
+        ::rename(m_path.c_str(), rename_path);
+    }
+#endif
 }
 
 void DebugOutFile::flush() {

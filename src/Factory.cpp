@@ -44,6 +44,10 @@ IDebugOut *Factory::mkDebugOutFile(FILE *fp, bool close_fp) {
     return new DebugOutFile(fp, close_fp);
 }
 
+IDebugOut *Factory::mkDebugOutPath(const std::string &name) {
+    return new DebugOutFile(name);
+}
+
 IDebugOutList *Factory::mkDebugOutList() {
     return new DebugOutList();
 }

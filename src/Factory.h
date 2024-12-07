@@ -37,6 +37,8 @@ public:
 
     virtual IDebugOut *mkDebugOutFile(FILE *fp, bool close_fp) override;
 
+    virtual IDebugOut *mkDebugOutPath(const std::string &name) override;
+
     virtual IDebugOutList *mkDebugOutList() override;
 
     static IFactory *inst();

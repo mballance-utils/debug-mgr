@@ -72,6 +72,14 @@ void DebugOutList::fatal(IDebug *dbg, const char *fmt, va_list ap) {
     }
 }
 
+void DebugOutList::crashClose() {
+    for (std::vector<IDebugOutUP>::const_iterator
+        it=m_outputs.begin();
+        it!=m_outputs.end(); it++) {
+        (*it)->crashClose();
+    }
+}
+
 void DebugOutList::flush() {
     for (std::vector<IDebugOutUP>::const_iterator
         it=m_outputs.begin();

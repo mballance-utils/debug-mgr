@@ -34,8 +34,6 @@ public:
 
 	virtual void addDebug(IDebug *dbg) override;
 
-	virtual IDebug *findDebug(const std::string &name) override;
-
 	virtual IDebug *findDebug(const char *name) override;
 
 	virtual void setFlags(

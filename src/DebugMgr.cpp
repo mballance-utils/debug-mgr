@@ -63,23 +63,19 @@ void DebugMgr::addDebug(IDebug *dbg) {
 	dbg->set_en(m_en);
 }
 
-IDebug *DebugMgr::findDebug(const std::string &name) {
+IDebug *DebugMgr::findDebug(const char *name) {
+	std::string name_s(name);
 	std::unordered_map<std::string,IDebug*>::const_iterator it;
 
-	it = m_debug_ep_m.find(name);
+	it = m_debug_ep_m.find(name_s);
 
 	if (it != m_debug_ep_m.end()) {
 		return it->second;
 	} else {
-		Debug *dbg = new Debug(this, name);
+		Debug *dbg = new Debug(this, name_s);
         addDebug(dbg);
 		return dbg;
 	}
-}
-
-IDebug *DebugMgr::findDebug(const char *name) {
-    std::string name_s(name);
-    return findDebug(name_s);
 }
 
 void DebugMgr::setFlags(

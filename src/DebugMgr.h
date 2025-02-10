@@ -36,6 +36,8 @@ public:
 
 	virtual IDebug *findDebug(const std::string &name) override;
 
+	virtual IDebug *findDebug(const char *name) override;
+
 	virtual void setFlags(
 			const std::unordered_map<std::string, int32_t> &flags) override;
 

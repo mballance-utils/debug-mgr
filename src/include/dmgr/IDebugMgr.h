@@ -28,6 +28,8 @@ public:
 
 	virtual IDebug *findDebug(const std::string &name) = 0;
 
+	virtual IDebug *findDebug(const char *name) = 0;
+
     virtual void setDebugOut(IDebugOut *out) = 0;
 
     virtual IDebugOut *getDebugOut() = 0;

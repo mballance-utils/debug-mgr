@@ -77,6 +77,11 @@ IDebug *DebugMgr::findDebug(const std::string &name) {
 	}
 }
 
+IDebug *DebugMgr::findDebug(const char *name) {
+    std::string name_s(name);
+    return findDebug(name_s);
+}
+
 void DebugMgr::setFlags(
 			const std::unordered_map<std::string, int32_t> &flags) {
 

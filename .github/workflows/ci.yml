@@ -11,17 +11,13 @@ jobs:
     runs-on: 'ubuntu-latest'
     strategy:
       matrix:
-        include:
-        - pyversion: 'cp38-cp38'
-        - pyversion: 'cp39-cp39'
-        - pyversion: 'cp310-cp310'
-        - pyversion: 'cp311-cp311'
-        - pyversion: 'cp312-cp312'
+        spec: ['cp38-cp38', 'cp39-cp39', 'cp310-cp310', 'cp311-cp311', 'cp312-cp312']
+        image: [manylinux2014_x86_64, manylinux_2_28_x86_64, manylinux_2_34_x86_64]
     steps:
     - uses: actions/checkout@v4
     - name: Build packages
       env:
-        IVPM_PYTHON: /opt/python/${{ matrix.pyversion }}/bin/python
+        IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
         BUILD_NUM: ${{ github.run_id }}
       run: >
         docker run --rm
@@ -29,7 +25,7 @@ jobs:
         --env IVPM_PYTHON
         --env BUILD_NUM
         --workdir /io
-        quay.io/pypa/manylinux2014_x86_64
+        quay.io/pypa/${{ matrix.image }}
         /io/scripts/build_linux.sh
 
     - name: Publish to PyPi

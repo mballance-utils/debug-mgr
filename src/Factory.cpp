@@ -62,9 +62,9 @@ IFactory *Factory::inst() {
 Factory *Factory::m_inst = 0;
 
 extern "C" IFactory *debug_mgr_getFactory() {
-    fprintf(stdout, "debug_mgr_getFactory() %p\n",
-        Factory::inst());
-    fflush(stdout);
+//    fprintf(stdout, "debug_mgr_getFactory() %p\n",
+//        Factory::inst());
+//    fflush(stdout);
     return Factory::inst();
 }
 

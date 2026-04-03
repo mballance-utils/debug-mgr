@@ -50,7 +50,7 @@ ext = Extension("debug_mgr.core",
             include_dirs=[incdir])
 ext.cython_directives={'language_level' : '3'}
 
-setup_requires=['setuptools_scm', 'cython', 'ivpm']
+setup_requires=['setuptools_scm', 'vcs_versioning', 'cython', 'ivpm']
 
 #if isSrcBuild:
 #    setup_requires.append('ivpm')

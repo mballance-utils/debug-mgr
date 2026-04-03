@@ -1,5 +1,7 @@
 #!/bin/sh -x
 
+git config --global --add safe.directory /io
+
 echo "BUILD_NUM=${BUILD_NUM}" >> python/debug_mgr/__build_num__.py
 ${IVPM_PYTHON} -m pip install ivpm cython setuptools --pre
 ${IVPM_PYTHON} -m ivpm update -a --py-prerls-packages --py-pip

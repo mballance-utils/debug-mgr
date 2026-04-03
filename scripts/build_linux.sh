@@ -16,4 +16,4 @@ for whl in dist/*.whl; do
 done
 
 ${PYTHON} -m pip install wheelhouse/*.whl
-${PYTHON} -m pytest python/tests/ -v
+${PYTHON} -m pytest --import-mode=importlib python/tests/ -v

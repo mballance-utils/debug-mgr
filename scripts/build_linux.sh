@@ -14,3 +14,6 @@ for whl in dist/*.whl; do
     ${PYTHON} -m auditwheel repair --only-plat $whl
     rm $whl
 done
+
+${PYTHON} -m pip install wheelhouse/*.whl
+${PYTHON} -m pytest python/tests/ -v

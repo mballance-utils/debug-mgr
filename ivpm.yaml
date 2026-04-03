@@ -16,6 +16,8 @@ package:
       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
     - name: ninja
       src: pypi
+    - name: pytest
+      src: pypi
 
   - name: default
     deps:
@@ -25,5 +27,7 @@ package:
       src: pypi
     - name: gtest
       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
+    - name: pytest
+      src: pypi
        
 

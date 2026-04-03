@@ -2,7 +2,7 @@
 
 echo "BUILD_NUM=${BUILD_NUM}" >> python/debug_mgr/__build_num__.py
 ${IVPM_PYTHON} -m pip install ivpm cython setuptools --pre
-${IVPM_PYTHON} -m ivpm update -a --py-prerls-packages
+${IVPM_PYTHON} -m ivpm update -a --py-prerls-packages --py-pip
 
 PYTHON=./packages/python/bin/python
 ${PYTHON} -m pip install twine auditwheel ninja wheel cython

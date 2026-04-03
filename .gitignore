@@ -40,3 +40,7 @@ python/core.cpp
 
 .eggs/
 *.egg-info/
+
+venv/
+foo.pss
+debug-mgr.code-workspace

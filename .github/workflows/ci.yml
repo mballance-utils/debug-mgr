@@ -14,7 +14,7 @@ jobs:
         spec: ['cp310-cp310', 'cp311-cp311', 'cp312-cp312', 'cp313-cp313', 'cp314-cp314']
         image: [manylinux2014_x86_64, manylinux_2_28_x86_64, manylinux_2_34_x86_64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Build packages
       env:
         IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
@@ -44,7 +44,7 @@ jobs:
         spec: ['cp310-cp310', 'cp311-cp311', 'cp312-cp312', 'cp313-cp313', 'cp314-cp314']
         image: [manylinux2014_aarch64, manylinux_2_28_aarch64, manylinux_2_34_aarch64]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Build packages
       env:
         IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
@@ -78,9 +78,9 @@ jobs:
           - pyversion: '3.13'
           - pyversion: '3.14'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install python ${{ matrix.pyversion }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.pyversion }}
       - name: Fetch dependencies
@@ -120,10 +120,10 @@ jobs:
           - pyversion: '3.14'
     steps:
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Install python ${{ matrix.pyversion }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.pyversion }}
 

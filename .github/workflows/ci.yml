@@ -1,10 +1,29 @@
+# mballance-utils/debug-mgr -- GitHub Actions.
+#
+# COPY THIS AS A PAIR. Its counterpart is .forgejo/workflows/ci.yml. If
+# .forgejo/workflows/ is absent the Forgejo runner falls back to running THIS
+# FILE, under a runner that cannot build these wheels and was never set up to
+# publish them. Read that file before changing the shape of this one.
+#
+# Release authority for this repo is `github` -- see the gate job below. The
+# Forgejo side deliberately has no publish job.
+#
+# SHAPE: build -> artifact -> ONE publish job. Every platform leg uploads its
+# wheels and publishes nothing; a single `publish` job gathers them and makes
+# one upload. That is not tidiness. With a publish step inside each leg, a
+# release where Windows 3.12 fails after the Linux legs have uploaded leaves a
+# HALF-PUBLISHED version on PyPI -- and a PyPI filename can be yanked but never
+# reused, so there is no way to complete it. Gating one upload on all four
+# build jobs makes the release all-or-nothing.
+
 name: CI
+
 on:
   push:
+    branches: ['**']
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * 0/2'
 
 jobs:
   gate:
@@ -47,19 +66,68 @@ jobs:
           echo "release authority for $GITHUB_REPOSITORY: $auth"
           echo "authority=$auth" >> "$GITHUB_OUTPUT"
 
+  tagcheck:
+    # Cheap, and it runs before any of the 40-odd build jobs, so a mistyped tag
+    # costs seconds rather than half an hour.
+    #
+    # REQUIRED, not optional. The tag alone determines the published version, so
+    # this is what stops v0.1.0 being tagged while setup.py still says 0.0.2 --
+    # which would publish under the wrong number, unfixably, because a PyPI
+    # version can be yanked but never reused. The publish job asserts the second
+    # half of the same property: that the built artifacts agree with the source
+    # they claim to come from.
+    name: Tag matches source version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check the tag IS the version
+        run: |
+          case "$GITHUB_REF" in
+            refs/tags/v*) ;;
+            *) echo "not a tag -- nothing to check"; exit 0 ;;
+          esac
+          tag="${GITHUB_REF#refs/tags/v}"
+          base=$(sed -n 's/^version="\(.*\)"$/\1/p' setup.py | head -1)
+          echo "tag=$tag  source=$base"
+          if [ -z "$base" ]; then
+            echo "::error::no top-level version=\"...\" in setup.py to check the tag against"
+            exit 1
+          fi
+          if [ "$tag" != "$base" ]; then
+            echo "::error::tag v$tag does not match version $base in setup.py"
+            exit 1
+          fi
+          echo "OK: tag and source version agree on $base"
+
   linux:
-    needs: [gate]
+    needs: [gate, tagcheck]
     runs-on: 'ubuntu-latest'
     strategy:
+      # One Python's failure must not cancel the other fourteen -- otherwise a
+      # single broken interpreter reads as "everything is broken" and the real
+      # blast radius is invisible.
+      fail-fast: false
       matrix:
         spec: ['cp310-cp310', 'cp311-cp311', 'cp312-cp312', 'cp313-cp313', 'cp314-cp314']
         image: [manylinux2014_x86_64, manylinux_2_28_x86_64, manylinux_2_34_x86_64]
     steps:
     - uses: actions/checkout@v6
+    - name: Compute the build stamp
+      id: stamp
+      run: |
+        case "$GITHUB_REF" in
+          refs/tags/v*)
+            echo "tag build -- leaving the version clean"
+            echo "build_num=" >> "$GITHUB_OUTPUT" ;;
+          *)
+            stamp="dev${GITHUB_RUN_ID}+gh.g$(git rev-parse --short=7 HEAD)"
+            echo "stamping .$stamp"
+            echo "build_num=$stamp" >> "$GITHUB_OUTPUT" ;;
+        esac
     - name: Build packages
       env:
         IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
-        BUILD_NUM: ${{ github.run_id }}
+        BUILD_NUM: ${{ steps.stamp.outputs.build_num }}
       run: >
         docker run --rm
         --volume "$(pwd):/io"
@@ -69,28 +137,38 @@ jobs:
         quay.io/pypa/${{ matrix.image }}
         /io/scripts/build_linux.sh
 
-    - name: Publish to PyPi
-      if: startsWith(github.ref, 'refs/tags/v') && needs.gate.outputs.authority == 'github'
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        python3 -m pip install -U twine packaging
-        python3 -m twine upload wheelhouse/*.whl
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist-${{ matrix.image }}-${{ matrix.spec }}
+        path: wheelhouse/*.whl
+        if-no-files-found: error
 
   linux-aarch64:
-    needs: [gate]
+    needs: [gate, tagcheck]
     runs-on: 'ubuntu-24.04-arm'
     strategy:
+      fail-fast: false
       matrix:
         spec: ['cp310-cp310', 'cp311-cp311', 'cp312-cp312', 'cp313-cp313', 'cp314-cp314']
         image: [manylinux2014_aarch64, manylinux_2_28_aarch64, manylinux_2_34_aarch64]
     steps:
     - uses: actions/checkout@v6
+    - name: Compute the build stamp
+      id: stamp
+      run: |
+        case "$GITHUB_REF" in
+          refs/tags/v*)
+            echo "tag build -- leaving the version clean"
+            echo "build_num=" >> "$GITHUB_OUTPUT" ;;
+          *)
+            stamp="dev${GITHUB_RUN_ID}+gh.g$(git rev-parse --short=7 HEAD)"
+            echo "stamping .$stamp"
+            echo "build_num=$stamp" >> "$GITHUB_OUTPUT" ;;
+        esac
     - name: Build packages
       env:
         IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
-        BUILD_NUM: ${{ github.run_id }}
+        BUILD_NUM: ${{ steps.stamp.outputs.build_num }}
       run: >
         docker run --rm
         --volume "$(pwd):/io"
@@ -100,19 +178,17 @@ jobs:
         quay.io/pypa/${{ matrix.image }}
         /io/scripts/build_linux.sh
 
-    - name: Publish to PyPi
-      if: startsWith(github.ref, 'refs/tags/v') && needs.gate.outputs.authority == 'github'
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        python3 -m pip install -U twine packaging
-        python3 -m twine upload wheelhouse/*.whl
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist-${{ matrix.image }}-${{ matrix.spec }}
+        path: wheelhouse/*.whl
+        if-no-files-found: error
 
   macos:
-    needs: [gate]
+    needs: [gate, tagcheck]
     runs-on: macos-latest
     strategy:
+        fail-fast: false
         matrix:
           include:
           - pyversion: '3.10'
@@ -137,24 +213,32 @@ jobs:
         env:
           BUILD_NUM: ${{ github.run_id }}
         run: |
-          echo "BUILD_NUM=${BUILD_NUM}" > python/debug_mgr/__build_num__.py
+          case "$GITHUB_REF" in
+            refs/tags/v*)
+              echo "tag build -- leaving the version clean"
+              rm -f python/debug_mgr/__build_num__.py ;;
+            *)
+              stamp="dev${BUILD_NUM}+gh.g$(git rev-parse --short=7 HEAD)"
+              echo "stamping .$stamp"
+              echo "BUILD_NUM=\"$stamp\"" > python/debug_mgr/__build_num__.py ;;
+          esac
           ./packages/python/bin/python3 setup.py bdist_wheel
       - name: Run tests
         run: |
           ./packages/python/bin/python3 -m pip install dist/*.whl
           ./packages/python/bin/python3 -m pytest --import-mode=importlib python/tests/ -v
-      - name: Publish to PyPi
-        if: startsWith(github.ref, 'refs/tags/v') && needs.gate.outputs.authority == 'github'
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          ./packages/python/bin/python3 -m twine  upload dist/*.whl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-macos-${{ matrix.pyversion }}
+          path: dist/*.whl
+          if-no-files-found: error
 
   windows:
-    needs: [gate]
+    needs: [gate, tagcheck]
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - pyversion: '3.10'
@@ -175,13 +259,26 @@ jobs:
       with:
         arch: x64
     - name: Build/Test Package
+      # bash rather than PowerShell, so the stamping logic is the one line of
+      # shell it is everywhere else rather than a second dialect of it. The
+      # msvc-dev-cmd action exports its environment to the whole job, so the
+      # compiler is found either way.
+      shell: bash
       env:
         BUILD_NUM: ${{ github.run_id }}
       run: |
         python -m pip install ivpm
         python -m ivpm update -a --py-pip
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine pytest
-        echo "BUILD_NUM=$env:BUILD_NUM" > python/debug_mgr/__build_num__.py
+        case "$GITHUB_REF" in
+          refs/tags/v*)
+            echo "tag build -- leaving the version clean"
+            rm -f python/debug_mgr/__build_num__.py ;;
+          *)
+            stamp="dev${BUILD_NUM}+gh.g$(git rev-parse --short=7 HEAD)"
+            echo "stamping .$stamp"
+            echo "BUILD_NUM=\"$stamp\"" > python/debug_mgr/__build_num__.py ;;
+        esac
         ./packages/python/Scripts/python setup.py build bdist_wheel
 
     - name: Run tests
@@ -190,11 +287,73 @@ jobs:
         ./packages/python/Scripts/python -m pip install dist/*.whl
         ./packages/python/Scripts/python -m pytest --import-mode=importlib python/tests/ -v
 
-    - name: Publish to PyPi
-      if: startsWith(github.ref, 'refs/tags/v') && needs.gate.outputs.authority == 'github'
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      shell: bash
-      run: |
-          ./packages/python/Scripts/python -m twine upload dist/*.whl
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist-windows-${{ matrix.pyversion }}
+        path: dist/*.whl
+        if-no-files-found: error
+
+  publish:
+    name: Publish to PyPI
+    # Three conditions, and all of them matter:
+    #   * a TAG -- a push to a branch never releases anything. This is what
+    #     makes the 5-minute Forgejo sync safe: mirroring your work cannot ship
+    #     it.
+    #   * the switch names THIS forge.
+    #   * every build job succeeded -- `needs:` supplies this one. A partial
+    #     matrix must not become a partial release.
+    #
+    # SKIPS -- does not fail -- when the switch names the other side. A red
+    # build on the dormant side every time anyone tags would train people to
+    # ignore the signal, which is worse than no signal.
+    if: startsWith(github.ref, 'refs/tags/v') && needs.gate.outputs.authority == 'github'
+    needs: [gate, tagcheck, linux, linux-aarch64, macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - name: Check every artifact IS the tagged version
+        # The other half of the tagcheck job: that job proved the SOURCE agrees
+        # with the tag, this one proves the BUILT WHEELS agree with the source.
+        # A leg that somehow built from a stale version file passes the first
+        # and fails here.
+        run: |
+          base="${GITHUB_REF#refs/tags/v}"
+          ls -la dist/
+          n=0
+          for f in dist/*.whl; do
+            case "$(basename "$f")" in
+              debug_mgr-${base}-*.whl) n=$((n+1)) ;;
+              *) echo "::error::artifact $(basename "$f") is not version ${base}"; exit 1 ;;
+            esac
+          done
+          if [ "$n" -eq 0 ]; then
+            echo "::error::no wheels were gathered; refusing to publish an empty release"
+            exit 1
+          fi
+          echo "OK: $n wheel(s), all version ${base}"
+
+      - name: Publish
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -z "$TWINE_PASSWORD" ]; then
+            echo "::error::PYPI_API_TOKEN is not visible to this repository"
+            exit 1
+          fi
+          python3 -m pip install -U twine packaging
+          python3 -m twine check dist/*.whl
+          # Idempotence net: one switch, two possible publishers, and a re-run
+          # of this job after a partial network failure -- a double-fire has to
+          # be a no-op rather than an error.
+          python3 -m twine upload --non-interactive --skip-existing dist/*.whl
+          echo "published $(ls dist/*.whl | wc -l) wheel(s)"

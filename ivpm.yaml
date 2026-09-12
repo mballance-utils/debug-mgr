@@ -19,14 +19,17 @@ package:
     - name: pytest
       src: pypi
 
+  # The wheel build needs nothing from gtest -- it is only used by the C++ unit
+  # tests, which is why it stays in default-dev and not here. Fetching it in CI
+  # also broke the build: ivpm extracts .tar.gz packages with
+  # TarFile.extract(filter='data'), and `filter` did not exist before 3.10.12 --
+  # while actions/setup-python's macOS and Windows 3.10 is pinned at 3.10.11.
   - name: default
     deps:
     - name: cython
       src: pypi
     - name: ninja
       src: pypi
-    - name: gtest
-      url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
     - name: pytest
       src: pypi
        

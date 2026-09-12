@@ -12,10 +12,19 @@ from setuptools import Extension, find_namespace_packages
 #    for i,p in enumerate(os.environ["IVPM_PYTHONPATH"].split(ps)):
 #        sys.path.insert(i, p)
 
+# The release version. A tag build publishes exactly this, and CI refuses to
+# publish a tag that disagrees with it -- keep the `version="..."` shape, since
+# both the tag check and the Forgejo metadata check grep for it literally.
 version="0.0.2"
 
 proj_dir = os.path.dirname(os.path.abspath(__file__))
 
+# __build_num__.py is written by CI on a NON-tag build only, and holds a PEP 440
+# suffix such as "dev33020374597+gh.g7775f37". The local version segment (+gh.)
+# is what makes a CI artifact un-releasable: PyPI rejects local versions
+# outright, so an accidental upload fails at the tool rather than succeeding
+# quietly. On a tag build the file is absent, the import fails, and the version
+# stays clean.
 try:
     import sys
     print("proj_dir: %s" % proj_dir)

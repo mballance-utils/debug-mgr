@@ -11,7 +11,9 @@ else
     rm -f python/debug_mgr/__build_num__.py
 fi
 ${IVPM_PYTHON} -m pip install ivpm cython setuptools --pre
-${IVPM_PYTHON} -m ivpm update -a --py-prerls-packages --py-pip
+# -d default, explicitly: without it ivpm resolves default-dev on a source
+# checkout and drags the C++ test dependencies into the release build path.
+${IVPM_PYTHON} -m ivpm update -a -d default --py-prerls-packages --py-pip
 
 PYTHON=./packages/python/bin/python
 ${PYTHON} -m pip install twine auditwheel ninja wheel cython
